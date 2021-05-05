@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "orm_memo")
 class RoomMemo {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo
     var no: Long? = null
 
@@ -16,7 +16,8 @@ class RoomMemo {
     @ColumnInfo
     var datetime: Long = 0
 
-    constructor(content: String, datetime: Long){
+    constructor(no: Long?, content: String, datetime: Long){
+        this.no = no
         this.content = content
         this.datetime = datetime
     }
