@@ -6,6 +6,6 @@ import androidx.room.RoomDatabase
 @Database(entities = arrayOf(RoomMemo::class), version = 1, exportSchema = false)
 abstract class RoomHelper: RoomDatabase() {
 
-    abstract fun roomMemoDao(): RoomMemo
+    abstract fun roomMemoDao(): RoomMemoDao
 
 }
