@@ -16,4 +16,8 @@ interface RoomMemoDao {
 
     @Delete
     fun delete(memo: RoomMemo)
+
+    @Query("delete from orm_memo")
+    fun deleteAll()
+
 }
