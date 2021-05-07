@@ -7,6 +7,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hyunjung.RoomMemoapp.RecyclerAdapter
 import com.hyunjung.memoapp.databinding.ActivityMainBinding
 
@@ -19,7 +21,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        helper = Room.databaseBuilder(this, RoomHelper::class.java, "room_memo").allowMainThreadQueries().build()
+        helper = Room.databaseBuilder(this, RoomHelper::class.java, "room_memo")
+                .addMigrations(MigrateDatabase.MIGRATE_1_2)
+                .allowMainThreadQueries().build()
 
         val adapter = RecyclerAdapter()
         adapter.helper = helper
@@ -35,7 +39,8 @@ class MainActivity : AppCompatActivity() {
         // 저장 버튼
         binding.buttonSave.setOnClickListener {
             if(binding.editMemo.text.toString().isNotEmpty()) {
-                val memo = RoomMemo(binding.editMemo.text.toString(), System.currentTimeMillis())
+                val no = adapter.itemCount + 1
+                val memo = RoomMemo(no.toLong(), binding.editMemo.text.toString(), System.currentTimeMillis())
                 helper?.roomMemoDao()?.insert(memo)
                 adapter.listData.clear()
                 adapter.listData.addAll(helper?.roomMemoDao()?.getAll()?: listOf())
@@ -47,5 +52,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+}
+
+object MigrateDatabase {
+    val MIGRATE_1_2 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            val alter = "ALTER table room_memo add column new_title text"
+            database.execSQL(alter)
+        }
     }
 }

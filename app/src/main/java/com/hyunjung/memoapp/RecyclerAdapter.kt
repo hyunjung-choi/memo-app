@@ -36,6 +36,15 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.Holder>() {
             binding.btnDelete.setOnClickListener {
                 helper?.roomMemoDao()?.delete(mRoomMemo!!)
                 listData.remove(mRoomMemo)
+                helper?.roomMemoDao()?.deleteAll()
+
+                var i = 1
+                for(m in listData){
+                    m.no = i.toLong()
+                    i = i + 1
+                    helper?.roomMemoDao()?.insert(m)
+                }
+
                 notifyDataSetChanged()
             }
         }
